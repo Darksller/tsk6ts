@@ -1,0 +1,17 @@
+{
+	"name": "server",
+	"version": "1.0.0",
+	"description": "",
+	"main": "server.js",
+	"type": "module",
+	"scripts": {
+		"start": "nodemon server.js"
+	},
+	"author": "darksller",
+	"license": "ISC",
+	"dependencies": {
+		"nodemon": "^3.0.2",
+		"socket.io": "^4.7.2",
+		"ws": "^8.16.0"
+	}
+}

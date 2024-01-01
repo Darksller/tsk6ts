@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.toggleItem[data-state='on'] > button > svg {
+	color: #805ad5;
+}
+
+.toggleItem:hover > button > svg {
+	color: #805ad5;
+}
