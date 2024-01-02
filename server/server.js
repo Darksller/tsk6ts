@@ -64,3 +64,5 @@ io.on('connection', socket => {
 		socket.to(roomId).emit('clearImage', { image: room.image, status: true })
 	})
 })
+
+io.listen(3000)
