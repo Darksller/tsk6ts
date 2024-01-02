@@ -1,6 +1,11 @@
 import { Server } from 'socket.io'
+import { express } from 'express'
+import { createServer } from 'http'
 
-const io = new Server({
+const app = express()
+const server = createServer(app)
+
+const io = new Server(server, {
 	cors: {
 		origin: '*',
 	},
@@ -65,4 +70,6 @@ io.on('connection', socket => {
 	})
 })
 
-io.listen(3000)
+server.listen(8080, function () {
+	console.log('Listening on http://0.0.0.0:8080')
+})
