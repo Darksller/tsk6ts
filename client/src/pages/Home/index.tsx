@@ -8,7 +8,7 @@ import { socket } from '@/constants/socket'
 import { useNavigate } from 'react-router-dom'
 
 export function Home() {
-	const [rooms, setRooms] = useState<RoomResponse[]>([])
+	const [rooms, setRooms] = useState<Room[]>([])
 	const { nickname } = useUserStore()
 	const navigate = useNavigate()
 
@@ -16,6 +16,11 @@ export function Home() {
 		socket.on('rooms', rooms => {
 			setRooms(rooms)
 		})
+		socket.emit('getRooms', (response: RoomsResponse) => {
+			if (!response.status) return
+			setRooms(response.rooms)
+		})
+		socket.emit('leaveRooms')
 	}, [])
 
 	if (!nickname) {
@@ -27,7 +32,6 @@ export function Home() {
 			if (response.status) navigate(`/room?id=${response.id}`)
 		})
 	}
-
 	function onJoinClicked(roomNumber: string) {
 		navigate(`/room?id=${roomNumber}`)
 	}

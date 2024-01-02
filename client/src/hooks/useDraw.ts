@@ -1,43 +1,83 @@
-import { useEffect, useState } from 'react'
-import { useInitSketching } from './useInitSketching'
+import { sketchingTool } from '@/constants/sketchingToolsConstants'
+import { socket } from '@/constants/socket'
+import { computePointInCanvas } from '@/lib/canvasUtils'
 import { useDrawStore } from '@/store/useDrawStore'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-export function useDraw(image: string) {
-	const { canvas } = useDrawStore()
-	const { onMouseDown } = useInitSketching()
+export const useDraw = () => {
+	const { getTool, setImage, color, thickness, canvas, tool } = useDrawStore()
+	const [mouseDown, setMouseDown] = useState(false)
+	const prevPoint = useRef<null | Point>(null)
+	const onMouseDown = () => setMouseDown(true)
+	const navigate = useNavigate()
 
-	const [sizes, setSizes] = useState({
-		height: window.innerHeight,
-		width: window.innerWidth,
-	})
+	const drawTool = getTool()
 
 	useEffect(() => {
-		const draw = () => {
-			setSizes({
-				height: window.innerHeight,
-				width: window.innerWidth,
-			})
-
+		socket.on('draw', (currPoint, prPoint, color, thickness, tool) => {
 			if (!canvas) return
 			const ctx = canvas.getContext('2d')
 			if (!ctx) return
 
-			ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+			sketchingTool[tool]({
+				ctx,
+				currentPoint: currPoint,
+				prevPoint: prPoint,
+				color: color,
+				thickness: thickness,
+			})
+		})
+	}, [canvas])
 
-			const img = new Image()
-			img.src = image
+	useEffect(() => {
+		const onMouseMoveHandler = (e: MouseEvent) => {
+			if (!mouseDown || !canvas) return
+			const currentPoint = computePointInCanvas(e, canvas)
+			const ctx = canvas.getContext('2d')
+			if (!ctx || !currentPoint) return
+			drawTool({
+				ctx,
+				currentPoint,
+				prevPoint: prevPoint.current,
+				color,
+				thickness,
+			})
 
-			img.onload = () => {
-				ctx.drawImage(img, 0, 0, window.innerWidth, window.innerHeight)
-			}
+			socket.emit(
+				'saveImage',
+				canvas!.toDataURL(),
+				(response: RoomResponse) => {
+					if (!response.status) navigate('/')
+				}
+			)
+			socket.emit(
+				'draw',
+				currentPoint,
+				prevPoint.current,
+				color,
+				thickness,
+				tool
+			)
+
+			prevPoint.current = currentPoint
 		}
 
-		window.addEventListener('resize', draw)
+		const mouseUpHandler = () => {
+			setMouseDown(false)
+			setImage(canvas!.toDataURL())
+
+			prevPoint.current = null
+		}
+
+		canvas?.addEventListener('mousemove', onMouseMoveHandler)
+		window.addEventListener('mouseup', mouseUpHandler)
 
 		return () => {
-			window.removeEventListener('resize', draw)
+			canvas?.removeEventListener('mousemove', onMouseMoveHandler)
+			window.removeEventListener('mouseup', mouseUpHandler)
 		}
-	}, [image])
+	}, [mouseDown])
 
-	return { sizes, onMouseDown }
+	return { onMouseDown }
 }

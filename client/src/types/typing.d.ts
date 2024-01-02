@@ -8,8 +8,16 @@ type Draw = {
 
 type Point = { x: number; y: number }
 
-type RoomResponse = {
+type Room = {
 	id: string
 	image: string
+}
+
+type RoomResponse = Room & {
+	status: boolean
+}
+
+type RoomsResponse = {
+	rooms: Room[]
 	status: boolean
 }

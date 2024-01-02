@@ -1,8 +1,12 @@
 import { create } from 'zustand'
 
 export const useRoomStore = create<RoomStore>(set => ({
-	roomId: null,
-	setRoomId: (roomId: string | null) => set({ roomId }),
+	roomId: localStorage.getItem('roomId'),
+	setRoomId: (roomId: string | null) =>
+		set(() => {
+			localStorage.setItem('roomId', roomId!)
+			return { roomId: roomId }
+		}),
 }))
 
 interface RoomStore {

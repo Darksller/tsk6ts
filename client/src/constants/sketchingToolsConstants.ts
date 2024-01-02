@@ -2,7 +2,7 @@ import {
 	drawLine,
 	erase,
 	//fill
-} from '@/lib/drawing'
+} from '@/lib/canvasUtils'
 
 export const sketchingTool: Record<string, Function> = {
 	'': () => {},

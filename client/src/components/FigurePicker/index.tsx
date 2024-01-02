@@ -75,8 +75,8 @@ export default function FigurePicker() {
 					</Card>
 				</CarouselItem>
 			</CarouselContent>
-			<CarouselPrevious className='ml-2' />
-			<CarouselNext className='mr-2.5' />
+			<CarouselPrevious className='ml-2 text-purple-700' />
+			<CarouselNext className='mr-2.5 text-purple-700' />
 		</Carousel>
 	)
 }

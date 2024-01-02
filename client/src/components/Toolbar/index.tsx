@@ -12,7 +12,8 @@ import FigurePicker from '../FigurePicker'
 import { Slider } from '../ui/slider'
 import { Button } from '../ui/button'
 import { memo } from 'react'
-import { clear } from '@/lib/drawing'
+import { clearScreen } from '@/lib/canvasUtils'
+import { socket } from '@/constants/socket'
 
 function SketchingToolbar() {
 	const { color, setColor, setThickness, thickness, canvas, setImage } =
@@ -26,7 +27,8 @@ function SketchingToolbar() {
 	}
 
 	function onClearButton(): void {
-		clear(canvas)
+		socket.emit('clearScreen')
+		clearScreen(canvas)
 		setImage('')
 	}
 

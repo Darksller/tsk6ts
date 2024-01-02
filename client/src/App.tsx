@@ -1,4 +1,4 @@
-import Draw from './pages/Draw'
+import DrawBoard from './pages/DrawBoard'
 import { Home } from './pages/Home'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 
@@ -7,7 +7,7 @@ function App() {
 		<Router>
 			<Routes>
 				<Route path='/' element={<Home />} />
-				<Route path='/room/*' element={<Draw />} />
+				<Route path='/room/*' element={<DrawBoard />} />
 			</Routes>
 		</Router>
 	)
