@@ -2,6 +2,6 @@ import { io } from 'socket.io-client'
 
 export const socket = io('wss://tsk6-server.glitch.me', {
 	extraHeaders: {
-		'user-agent': 'Google Chrome',
+		'User-Agent': 'Google Chrome',
 	},
 })
