@@ -1,9 +1,10 @@
 import { Server } from 'socket.io'
+import cors from 'cors'
 import express from 'express'
-import { createServer } from 'http'
+import http from 'http'
 
 const app = express()
-const httpServer = createServer(app)
+const httpServer = http.createServer(app)
 
 const io = new Server(httpServer, {
 	cors: {
@@ -11,64 +12,67 @@ const io = new Server(httpServer, {
 	},
 })
 
+app.use(cors())
+
 const rooms = []
 
-httpServer.listen(() => {
-	console.log('listening')
-	io.on('connection', socket => {
-		socket.on('getRooms', callback => {
-			callback({ rooms, status: true })
-		})
+io.on('connection', socket => {
+	socket.on('getRooms', callback => {
+		callback({ rooms, status: true })
+	})
 
-		socket.on('addNewRoom', callback => {
-			const newRoomId =
-				rooms.length > 0 ? Math.max(...rooms.map(room => room.id)) + 1 : 1
-			const newRoom = { id: newRoomId.toString(), image: '' }
-			rooms.push(newRoom)
+	socket.on('addNewRoom', callback => {
+		const newRoomId =
+			rooms.length > 0 ? Math.max(...rooms.map(room => room.id)) + 1 : 1
+		const newRoom = { id: newRoomId.toString(), image: '' }
+		rooms.push(newRoom)
 
-			callback({ ...newRoom, status: true })
-			socket.broadcast.emit('rooms', rooms)
-		})
+		callback({ ...newRoom, status: true })
+		socket.broadcast.emit('rooms', rooms)
+	})
 
-		socket.on('joinRoom', (roomId, callback) => {
-			const room = rooms.find(room => room.id == roomId)
-			if (!room) return callback({ status: false })
+	socket.on('joinRoom', (roomId, callback) => {
+		const room = rooms.find(room => room.id == roomId)
+		if (!room) return callback({ status: false })
 
-			rooms.map(room => socket.leave(room.id))
-			socket.join(roomId)
+		rooms.map(room => socket.leave(room.id))
+		socket.join(roomId)
 
-			callback({ ...room, status: true })
-		})
+		callback({ ...room, status: true })
+	})
 
-		socket.on('getImage', callback => {
-			const roomId = Array.from(socket.rooms)[1]
-			const room = rooms.find(room => room.id == roomId)
-			if (!room) return callback({ status: false })
+	socket.on('getImage', callback => {
+		const roomId = Array.from(socket.rooms)[1]
+		const room = rooms.find(room => room.id == roomId)
+		if (!room) return callback({ status: false })
 
-			callback({ image: room.image, status: true })
-		})
+		callback({ image: room.image, status: true })
+	})
 
-		socket.on('saveImage', (image, callback) => {
-			const roomId = Array.from(socket.rooms)[1]
-			const room = rooms.find(room => room.id == roomId)
-			if (!room) return callback({ status: false })
+	socket.on('saveImage', (image, callback) => {
+		const roomId = Array.from(socket.rooms)[1]
+		const room = rooms.find(room => room.id == roomId)
+		if (!room) return callback({ status: false })
 
-			room.image = image
-		})
+		room.image = image
+	})
 
-		socket.on('draw', (currentPoint, prevPoint, color, thickness, tool) => {
-			const roomId = Array.from(socket.rooms)[1]
-			socket
-				.to(roomId)
-				.emit('draw', currentPoint, prevPoint, color, thickness, tool)
-		})
+	socket.on('draw', (currentPoint, prevPoint, color, thickness, tool) => {
+		const roomId = Array.from(socket.rooms)[1]
+		socket
+			.to(roomId)
+			.emit('draw', currentPoint, prevPoint, color, thickness, tool)
+	})
 
-		socket.on('clearScreen', callback => {
-			const roomId = Array.from(socket.rooms)[1]
-			const room = rooms.find(room => room.id == roomId)
-			if (!room) return callback({ status: false })
-			room.image = ''
-			socket.to(roomId).emit('clearImage', { image: room.image, status: true })
-		})
+	socket.on('clearScreen', callback => {
+		const roomId = Array.from(socket.rooms)[1]
+		const room = rooms.find(room => room.id == roomId)
+		if (!room) return callback({ status: false })
+		room.image = ''
+		socket.to(roomId).emit('clearImage', { image: room.image, status: true })
 	})
 })
+
+server.listen(process.env.PORT || 5000, () =>
+	console.log(`Server has started.`)
+)
