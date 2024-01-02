@@ -1,3 +1,7 @@
 import { io } from 'socket.io-client'
 
-export const socket = io('https://tsk6-server.vercel.app/')
+export const socket = io('wss://tsk6-server.glitch.me', {
+	extraHeaders: {
+		'user-agent': 'Google Chrome',
+	},
+})
