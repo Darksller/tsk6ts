@@ -3,14 +3,12 @@ import { socket } from '@/constants/socket'
 import { computePointInCanvas } from '@/lib/canvasUtils'
 import { useDrawStore } from '@/store/useDrawStore'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 export const useDraw = () => {
 	const { getTool, setImage, color, thickness, canvas, tool } = useDrawStore()
 	const [mouseDown, setMouseDown] = useState(false)
 	const prevPoint = useRef<null | Point>(null)
 	const onMouseDown = () => setMouseDown(true)
-	const navigate = useNavigate()
 
 	const drawTool = getTool()
 
@@ -28,6 +26,7 @@ export const useDraw = () => {
 				thickness: thickness,
 			})
 		})
+		socket.on('saveImage', () => socket.emit('saveImage', canvas!.toDataURL()))
 	}, [canvas])
 
 	useEffect(() => {
@@ -44,13 +43,6 @@ export const useDraw = () => {
 				thickness,
 			})
 
-			socket.emit(
-				'saveImage',
-				canvas!.toDataURL(),
-				(response: RoomResponse) => {
-					if (!response.status) navigate('/')
-				}
-			)
 			socket.emit(
 				'draw',
 				currentPoint,

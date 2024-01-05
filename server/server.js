@@ -39,6 +39,8 @@ io.on('connection', socket => {
 		socket.join(roomId)
 
 		callback({ ...room, status: true })
+
+		socket.to(roomId).emit('saveImage')
 	})
 
 	socket.on('getImage', callback => {
