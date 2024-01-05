@@ -27,6 +27,7 @@ export const useDraw = () => {
 			})
 		})
 		socket.on('getImage', () => {
+			if (!canvas) return
 			console.log('mister loh')
 			socket.emit('saveImage', canvas!.toDataURL())
 		})
