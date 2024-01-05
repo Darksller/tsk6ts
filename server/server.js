@@ -51,10 +51,10 @@ io.on('connection', socket => {
 		callback({ image: room.image, status: true })
 	})
 
-	socket.on('saveImage', (image, callback) => {
+	socket.on('saveImage', image => {
 		const roomId = Array.from(socket.rooms)[1]
 		const room = rooms.find(room => room.id == roomId)
-		if (!room) return callback({ status: false })
+		if (!room) return
 
 		room.image = image
 	})
