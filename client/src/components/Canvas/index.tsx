@@ -17,7 +17,7 @@ export function Canvas() {
 				setImage(response.image)
 				drawImage(canvas, response.image)
 			})
-		}, 500)
+		}, 5000)
 
 		socket.on('clearImage', (response: RoomResponse) => {
 			if (!response.status) return
