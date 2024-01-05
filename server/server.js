@@ -35,12 +35,12 @@ io.on('connection', socket => {
 		const room = rooms.find(room => room.id == roomId)
 		if (!room) return callback({ status: false })
 
+		socket.to(roomId).emit('saveImage')
+
 		rooms.map(room => socket.leave(room.id))
 		socket.join(roomId)
 
 		callback({ ...room, status: true })
-
-		socket.to(roomId).emit('saveImage')
 	})
 
 	socket.on('getImage', callback => {
