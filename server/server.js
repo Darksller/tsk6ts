@@ -39,7 +39,7 @@ io.on('connection', socket => {
 		socket.to(roomId).emit('getImage')
 
 		rooms.map(room => socket.leave(room.id))
-		socket.join(roomId)
+		setTimeout(() => socket.join(roomId), 500)
 
 		callback({ ...room, status: true })
 	})
