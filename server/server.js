@@ -18,6 +18,7 @@ const rooms = []
 
 io.on('connection', socket => {
 	socket.on('getRooms', callback => {
+		//TODO: удалять комнаты без людей
 		callback({ rooms, status: true })
 	})
 
@@ -35,7 +36,7 @@ io.on('connection', socket => {
 		const room = rooms.find(room => room.id == roomId)
 		if (!room) return callback({ status: false })
 
-		socket.to(roomId).emit('saveImage')
+		socket.to(roomId).emit('getImage')
 
 		rooms.map(room => socket.leave(room.id))
 		socket.join(roomId)

@@ -26,7 +26,10 @@ export const useDraw = () => {
 				thickness: thickness,
 			})
 		})
-		socket.on('saveImage', () => socket.emit('saveImage', canvas!.toDataURL()))
+		socket.on('getImage', () => {
+			console.log('mister loh')
+			socket.emit('saveImage', canvas!.toDataURL())
+		})
 	}, [canvas])
 
 	useEffect(() => {
