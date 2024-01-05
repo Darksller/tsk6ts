@@ -1,4 +1,3 @@
 import { io } from 'socket.io-client'
 
-//export const socket = io('localhost:5000')
-export const socket = io('https://tsk6vercel.app/')
+export const socket = io('https://tsk6ts-production.up.railway.app/')
