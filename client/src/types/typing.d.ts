@@ -13,7 +13,9 @@ type Room = {
 	image: string
 }
 
-type RoomResponse = Room & {
+type RoomResponse = {
+	id: string
+	image: string
 	status: boolean
 }
 

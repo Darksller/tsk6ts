@@ -11,11 +11,13 @@ export function Canvas() {
 	const { sizes } = useUtility()
 
 	useEffect(() => {
-		socket.emit('getImage', (response: RoomResponse) => {
-			if (!response.status) return
-			setImage(response.image)
-			drawImage(canvas, response.image)
-		})
+		setTimeout(() => {
+			socket.emit('getImage', (response: RoomResponse) => {
+				if (!response.status) return
+				setImage(response.image)
+				drawImage(canvas, response.image)
+			})
+		}, 2000)
 
 		socket.on('clearImage', (response: RoomResponse) => {
 			if (!response.status) return
